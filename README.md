@@ -14,6 +14,8 @@ A Windows Forms (.NET 8) desktop application that lets residents of the City of 
 6. [Data Structures Used](#data-structures-used)
 7. [Continuous Integration](#continuous-integration)
 
+> For a detailed step-by-step user guide, see [WALKTHROUGH.md](WALKTHROUGH.md).
+
 ---
 
 ## Overview
