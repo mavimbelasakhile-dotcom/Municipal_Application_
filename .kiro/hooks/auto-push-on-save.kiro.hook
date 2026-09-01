@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Auto Push to Git on Save",
+  "description": "Automatically stages, commits, and pushes changes to the GitHub master branch whenever a C# or project file is saved.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.cs",
+      "*.csproj",
+      "*.resx",
+      "*.slnx"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "git add -A && git commit -m \"Auto-commit: update on save\" && git push origin master",
+    "timeout": 120
+  }
+}
