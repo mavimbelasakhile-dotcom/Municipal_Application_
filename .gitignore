@@ -24,3 +24,6 @@ x86/
 # NuGet
 *.nupkg
 packages/
+
+# Editor tooling (keep local, exclude from repo)
+.kiro/
