@@ -239,6 +239,7 @@ namespace AdvancedProgrammingAss1
             this.Controls.Add(this.pnlFeatured);
             this.Controls.Add(this.pnlSearch);
             this.Controls.Add(this.pnlEventList);
+            this.Controls.Add(this.pnlRecommend);
             this.Controls.Add(this.btnBackToMenu);
             this.Controls.Add(this.pnlBranding);
             this.Controls.Add(this.pnlHeader);
