@@ -35,6 +35,10 @@ namespace AdvancedProgrammingAss1
             this.btnClearSearch = new Button();
             this.lblResultCount = new Label();
             this.pnlEventList = new Panel();
+            this.pnlRecommend = new Panel();
+            this.lblRecommendTitle = new Label();
+            this.lblRecommendReason = new Label();
+            this.pnlRecommendList = new Panel();
             this.pnlFooter = new Panel();
             this.lblStats = new Label();
             this.btnBackToMenu = new Button();
