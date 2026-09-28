@@ -63,9 +63,9 @@ namespace AdvancedProgrammingAss1
 
         private void btnLocalEvents_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This feature will be implemented in a future update.\n\n" +
-                "Stay tuned for local events and announcements in the City of uMhlathuze.",
-                "Coming Soon", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            LocalEventsForm eventsForm = new LocalEventsForm(this);
+            eventsForm.Show();
+            this.Hide();
         }
 
         private void btnServiceRequest_Click(object sender, EventArgs e)

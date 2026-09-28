@@ -150,12 +150,13 @@
             this.lblReportBadge.Visible = false;
 
             // btnLocalEvents
-            this.btnLocalEvents.BackColor = Color.FromArgb(200, 200, 200);
-            this.btnLocalEvents.Enabled = false;
+            this.btnLocalEvents.BackColor = Color.FromArgb(139, 0, 0);
+            this.btnLocalEvents.Cursor = Cursors.Hand;
             this.btnLocalEvents.FlatAppearance.BorderSize = 0;
+            this.btnLocalEvents.FlatAppearance.MouseOverBackColor = Color.FromArgb(165, 0, 0);
             this.btnLocalEvents.FlatStyle = FlatStyle.Flat;
             this.btnLocalEvents.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
-            this.btnLocalEvents.ForeColor = Color.FromArgb(120, 120, 120);
+            this.btnLocalEvents.ForeColor = Color.White;
             this.btnLocalEvents.Location = new Point(50, 185);
             this.btnLocalEvents.Name = "btnLocalEvents";
             this.btnLocalEvents.Size = new Size(380, 70);
