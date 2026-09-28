@@ -177,8 +177,33 @@ namespace AdvancedProgrammingAss1
             // ========== EVENT LIST (scrollable) ==========
             this.pnlEventList.BackColor = Color.FromArgb(38, 45, 55);
             this.pnlEventList.Location = new Point(25, 315);
-            this.pnlEventList.Size = new Size(945, 300);
+            this.pnlEventList.Size = new Size(610, 300);
             this.pnlEventList.AutoScroll = true;
+
+            // ========== RECOMMENDATIONS SIDEBAR ==========
+            this.pnlRecommend.BackColor = Color.FromArgb(30, 36, 45);
+            this.pnlRecommend.Location = new Point(650, 315);
+            this.pnlRecommend.Size = new Size(320, 300);
+
+            this.lblRecommendTitle.AutoSize = true;
+            this.lblRecommendTitle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            this.lblRecommendTitle.ForeColor = Color.FromArgb(255, 200, 90);
+            this.lblRecommendTitle.Location = new Point(12, 10);
+            this.lblRecommendTitle.Text = "\u2728 Recommended for You";
+            this.pnlRecommend.Controls.Add(this.lblRecommendTitle);
+
+            this.lblRecommendReason.Font = new Font("Segoe UI", 8.5F, FontStyle.Italic);
+            this.lblRecommendReason.ForeColor = Color.FromArgb(170, 180, 190);
+            this.lblRecommendReason.Location = new Point(12, 36);
+            this.lblRecommendReason.Size = new Size(296, 32);
+            this.lblRecommendReason.Text = "Search for events and we'll suggest related ones here.";
+            this.pnlRecommend.Controls.Add(this.lblRecommendReason);
+
+            this.pnlRecommendList.BackColor = Color.FromArgb(30, 36, 45);
+            this.pnlRecommendList.Location = new Point(8, 72);
+            this.pnlRecommendList.Size = new Size(304, 220);
+            this.pnlRecommendList.AutoScroll = true;
+            this.pnlRecommend.Controls.Add(this.pnlRecommendList);
 
             // ========== FOOTER ==========
             this.pnlFooter.BackColor = Color.FromArgb(30, 30, 30);
