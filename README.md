@@ -1,6 +1,6 @@
 # City of uMhlathuze — Municipal Services Portal
 
-A Windows Forms (.NET 8) desktop application that lets residents of the City of uMhlathuze report municipal issues and service requests. Built with the municipality's branding for a professional, enterprise-grade experience.
+A Windows Forms (.NET 8) desktop application that lets residents of the City of uMhlathuze report municipal issues and browse local events and announcements. Built with the municipality's branding for a professional, enterprise-grade experience.
 
 ---
 
@@ -9,207 +9,326 @@ A Windows Forms (.NET 8) desktop application that lets residents of the City of 
 1. [Overview](#overview)
 2. [Features](#features)
 3. [Technology Stack](#technology-stack)
-4. [How to Run](#how-to-run)
-5. [Application Walkthrough (Screenshots)](#application-walkthrough)
-6. [Data Structures Used](#data-structures-used)
-7. [Continuous Integration](#continuous-integration)
+4. [How to Compile](#how-to-compile)
+5. [How to Run](#how-to-run)
+6. [How to Use the Software](#how-to-use-the-software)
+7. [Data Structures Used](#data-structures-used)
+8. [Source Code Highlights](#source-code-highlights)
+9. [Example Output](#example-output)
+10. [Project Structure](#project-structure)
+11. [Continuous Integration](#continuous-integration)
 
-> For a detailed step-by-step user guide, see [WALKTHROUGH.md](WALKTHROUGH.md).
+> For a detailed step-by-step user guide with screenshots, see [WALKTHROUGH.md](WALKTHROUGH.md).
 
 ---
 
 ## Overview
 
-The Municipal Services Portal provides residents with a single point of contact to engage with municipal services. On startup, the user is presented with three services:
+The Municipal Services Portal provides residents with a single point of contact to engage with municipal services. On startup, the Main Menu presents three services:
 
-- **Report Issues** (implemented)
-- **Local Events & Announcements** (planned — disabled)
+- **Report Issues** (implemented in Part 1)
+- **Local Events & Announcements** (implemented in Part 2)
 - **Service Request Status** (planned — disabled)
-
-Only the "Report Issues" module is active in this release, in line with the assignment requirements.
 
 ---
 
 ## Features
 
-- Municipal-branded UI (City of uMhlathuze colours, logo, and slogan)
-- Report issues with **location, category, priority, description, and attachments**
-- **Location autocomplete** for uMhlathuze suburbs, streets, and landmarks (array-based)
-- **Category** dropdown (Sanitation, Roads, Water, Electricity, and more)
-- **Priority** selector (Low / Medium / High / Critical) with colour indicator
-- **File attachments** restricted to images and documents (JPG, PNG, BMP, PDF, DOC, DOCX, TXT)
-- **Description** field with a live character counter (max 1000)
-- **Preferred contact method** (Email / Phone / SMS) with format validation
-- **Dynamic engagement progress bar** with colour transitions (red → amber → green)
-- **Custom branded dialogs** for confirmation and success
-- **Unique reference numbers** (e.g., `UMH-2026-0001`)
-- **Report history** viewer with a `DataGridView`
-- **Export reports** to a formatted text file
-- Real-time field validation with visual indicators
-- Session report counter, live date/time clock, and personalised welcome
+### Report Issues (Part 1)
+- Report issues with location, category, priority, description, and attachments
+- Location autocomplete, live character counter, and preferred contact method
+- Dynamic engagement progress bar and custom branded dialogs
+- Unique reference numbers (e.g., `UMH-2026-0001`), report history, and export
+
+### Local Events & Announcements (Part 2)
+- Aesthetically pleasing, colour-coded event cards
+- A **Featured** banner showing the highest-priority event (`PriorityQueue`)
+- **Search** by category and/or date
+- **Smart Recommendations** sidebar that learns from your searches
+- Live stats footer showing unique categories and dates (`HashSet`)
 
 ---
 
 ## Technology Stack
 
 - **Language:** C#
-- **Framework:** .NET 8 (Windows Forms)
-- **IDE:** Visual Studio
+- **Framework:** .NET 8 (Windows Forms) — target `net8.0-windows`
+- **IDE:** Visual Studio 2022
 - **Version Control:** Git / GitHub
-- **CI:** GitHub Actions
+- **CI:** GitHub Actions (builds in Release on `windows-latest`)
+
+---
+
+## How to Compile
+
+### Option A — Visual Studio
+1. Open `AdvancedProgrammingAss1.slnx` in Visual Studio 2022.
+2. Select **Build > Build Solution** (or press `Ctrl + Shift + B`).
+
+### Option B — Command line (.NET 8 SDK)
+```bash
+dotnet restore
+dotnet build --configuration Release
+```
+
+A successful build prints:
+```
+AdvancedProgrammingAss1 net8.0-windows succeeded → bin\Release\net8.0-windows\AdvancedProgrammingAss1.dll
+Build succeeded.
+```
 
 ---
 
 ## How to Run
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mavimbelasakhile-dotcom/Municipal_Application_.git
-   ```
-2. Open `AdvancedProgrammingAss1.slnx` in Visual Studio.
-3. Press **Ctrl + F5** (Run without debugging) or **F5** to launch.
+### Option A — Visual Studio
+Press **F5** (debug) or **Ctrl + F5** (run without debugging).
 
-Or from the command line:
+### Option B — Command line
 ```bash
 dotnet run
 ```
 
----
+### Option C — Run the built executable
+```bash
+bin\Release\net8.0-windows\AdvancedProgrammingAss1.exe
+```
 
-## Application Walkthrough
-
-### 1. Main Menu (Startup)
-
-The landing screen presented on startup, showing the three services. Only "Report Issues" is enabled.
-
-![Main Menu](screenshots/01-main-menu.png)
+> **Note:** This is a Windows Forms application and must be run on **Windows**.
 
 ---
 
-### 2. Report Issues Form
+## How to Use the Software
 
-The Report Issues form when first opened, with the branded header, progress bar, and input fields.
-
-![Report Issues Form](screenshots/02-report-issues-empty.png)
-
----
-
-### 3. Location Autocomplete
-
-As the user types a location, matching uMhlathuze area suggestions appear in a dropdown.
-
-![Location Autocomplete](screenshots/03-location-autocomplete.png)
-
----
-
-### 4. Category Selection
-
-A dropdown listing municipal issue categories (Sanitation, Roads, Water Supply, etc.).
-
-![Category Dropdown](screenshots/04-category-dropdown.png)
-
----
-
-### 5. Priority Selection
-
-The priority dropdown with a colour-coded indicator (Low = green, Critical = red).
-
-![Priority Selector](screenshots/05-priority-selector.png)
-
----
-
-### 6. Description with Character Counter
-
-A RichTextBox for the issue description, with a live character counter that changes colour near the limit.
-
-![Description](screenshots/06-description.png)
-
----
-
-### 7. File Attachments
-
-Users can attach supporting images and documents. The list shows each file with its size.
-
-![Attachments](screenshots/07-attachments.png)
-
----
-
-### 8. Preferred Contact Method — Email
-
-When Email is selected, a single field captures the email address (validated on submit).
-
-![Contact Email](screenshots/08-contact-email.png)
-
----
-
-### 9. Preferred Contact Method — Phone / SMS
-
-When Phone Call or SMS is selected, the field captures a phone number (validated on submit).
-
-![Contact Phone](screenshots/09-contact-phone.png)
-
----
-
-### 10. Engagement Progress Bar
-
-A dynamic progress bar encourages completion, changing colour and message as fields are filled.
-
-![Progress Bar](screenshots/10-progress-bar.png)
-
----
-
-### 11. Confirmation Dialog
-
-A custom branded dialog asks the user to confirm before submitting.
-
-![Confirmation Dialog](screenshots/11-confirm-dialog.png)
-
----
-
-### 12. Success Dialog
-
-On submission, a custom success dialog displays the unique reference number and a summary.
-
-![Success Dialog](screenshots/12-success-dialog.png)
-
----
-
-### 13. Report History
-
-A `DataGridView` lists all reports submitted during the session. Double-click a row for full details.
-
-![Report History](screenshots/13-report-history.png)
-
----
-
-### 14. Export to File
-
-Reports can be exported to a formatted text file for record-keeping.
-
-![Export](screenshots/14-export.png)
-
----
-
-### 15. Validation Feedback
-
-The application validates input and shows clear error messages (e.g., invalid email format).
-
-![Validation Error](screenshots/15-validation-error.png)
+1. **Launch** the app to see the Main Menu with a live clock and a personalised welcome.
+2. Click **Report Issues** to log a municipal issue (location, category, priority, description, attachments, contact method), then **Submit** to receive a unique reference number.
+3. Click **Local Events & Announcements** to:
+   - Browse upcoming events as colour-coded cards.
+   - See the **Featured** (highest-priority) event in the top banner.
+   - **Search** by selecting a category and/or ticking **Filter by date**, then clicking **Search**.
+   - Watch the **Recommended for You** sidebar update based on your search patterns.
+4. Click **View Report History** to review and **export** submitted reports.
+5. **Service Request Status** is disabled (planned for a future release).
 
 ---
 
 ## Data Structures Used
 
-- **`string[]` (array)** — stores the location autocomplete suggestions.
-- **`List<ReportedIssue>`** — stores all submitted issue reports in memory.
-- **`List<string>`** — stores the file paths attached to a report.
-- **`ReportedIssue` class** — models each report (reference number, location, category, priority, description, attachments, date, status, contact details).
+| Structure | Where | Purpose |
+|---|---|---|
+| `SortedDictionary<DateTime, List<LocalEvent>>` | `EventManager` | Events auto-sorted by date for optimised retrieval |
+| `Dictionary<string, List<LocalEvent>>` | `EventManager` | Fast category lookup (hash table) during search |
+| `HashSet<string>` / `HashSet<DateTime>` | `EventManager` | Unique categories and unique dates |
+| `Queue<LocalEvent>` | `EventManager` | Announcements processed first-in-first-out |
+| `Stack<LocalEvent>` | `EventManager` | Most recently added events (last-in-first-out) |
+| `PriorityQueue<LocalEvent, int>` | `EventManager` | Selecting the highest-priority featured event |
+| `Queue<SearchRecord>` | `RecommendationEngine` | Chronological search history |
+| `Dictionary<string, int>` | `RecommendationEngine` | Category frequency weighting |
+| `PriorityQueue<LocalEvent, double>` | `RecommendationEngine` | Ranking candidate events by relevance score |
+
+---
+
+## Source Code Highlights
+
+### 1. Managing event data with multiple data structures (`LocalEvent.cs`)
+
+```csharp
+public static class EventManager
+{
+    // SortedDictionary keyed by date -> events on that date (auto-sorted)
+    private static SortedDictionary<DateTime, List<LocalEvent>> eventsByDate = new();
+
+    // Dictionary (hash table) keyed by category -> events in that category
+    private static Dictionary<string, List<LocalEvent>> eventsByCategory
+        = new(StringComparer.OrdinalIgnoreCase);
+
+    // HashSets for unique categories and dates
+    private static HashSet<string> uniqueCategories = new(StringComparer.OrdinalIgnoreCase);
+    private static HashSet<DateTime> uniqueDates = new();
+
+    // Queue (FIFO) and Stack (LIFO)
+    private static Queue<LocalEvent> announcementQueue = new();
+    private static Stack<LocalEvent> recentEvents = new();
+
+    public static void AddEvent(LocalEvent ev)
+    {
+        DateTime dateKey = ev.Date.Date;
+        if (!eventsByDate.ContainsKey(dateKey)) eventsByDate[dateKey] = new();
+        eventsByDate[dateKey].Add(ev);
+
+        if (!eventsByCategory.ContainsKey(ev.Category)) eventsByCategory[ev.Category] = new();
+        eventsByCategory[ev.Category].Add(ev);
+
+        uniqueCategories.Add(ev.Category);
+        uniqueDates.Add(dateKey);
+        announcementQueue.Enqueue(ev);
+        recentEvents.Push(ev);
+    }
+}
+```
+
+### 2. Priority Queue for the featured event (`LocalEvent.cs`)
+
+```csharp
+public static LocalEvent? GetFeaturedEvent()
+{
+    // PriorityQueue orders by priority number (1 = highest priority)
+    var pq = new PriorityQueue<LocalEvent, int>();
+    foreach (var ev in allEvents)
+        pq.Enqueue(ev, ev.Priority);
+
+    return pq.Count > 0 ? pq.Dequeue() : null;
+}
+```
+
+### 3. Searching by category (dictionary) and date (`LocalEvent.cs`)
+
+```csharp
+public static List<LocalEvent> Search(string? category, DateTime? date)
+{
+    IEnumerable<LocalEvent> query;
+
+    if (!string.IsNullOrWhiteSpace(category) && category != "All Categories"
+        && eventsByCategory.ContainsKey(category))
+        query = eventsByCategory[category];   // fast hash-table filter
+    else
+        query = GetAllSortedByDate();
+
+    if (date.HasValue)
+        query = query.Where(e => e.Date.Date == date.Value.Date);
+
+    return query.OrderBy(e => e.Date).ToList();
+}
+```
+
+### 4. Smart recommendations — learning from searches (`RecommendationEngine.cs`)
+
+```csharp
+public static void RecordSearch(string? category, DateTime? date)
+{
+    var record = new SearchRecord { Category = category ?? "All Categories", Date = date };
+    searchHistory.Enqueue(record);                 // FIFO history
+
+    if (!string.Equals(record.Category, "All Categories", StringComparison.OrdinalIgnoreCase))
+    {
+        if (!categoryFrequency.ContainsKey(record.Category)) categoryFrequency[record.Category] = 0;
+        categoryFrequency[record.Category]++;      // frequency weighting
+    }
+    if (date.HasValue) searchedDates.Add(date.Value.Date);
+}
+
+public static List<LocalEvent> GetRecommendations(int maxResults, IEnumerable<LocalEvent>? exclude = null)
+{
+    var ranked = new PriorityQueue<LocalEvent, double>();
+    foreach (var ev in EventManager.GetAllSortedByDate())
+    {
+        double score = ScoreEvent(ev);
+        if (score > 0) ranked.Enqueue(ev, -score); // negate: highest score first
+    }
+
+    var results = new List<LocalEvent>();
+    while (ranked.Count > 0 && results.Count < maxResults)
+        results.Add(ranked.Dequeue());
+    return results;
+}
+```
+
+---
+
+## Example Output
+
+### Console / build output
+```
+> dotnet build --configuration Release
+Restore complete (0.7s)
+  AdvancedProgrammingAss1 net8.0-windows succeeded → bin\Release\net8.0-windows\AdvancedProgrammingAss1.dll
+Build succeeded in 6.5s
+```
+
+### Local Events screen (textual representation)
+
+```
+================================================================
+  Local Events & Announcements - City of uMhlathuze
+================================================================
+ ★ FEATURED: Water Maintenance Notice
+   Tuesday, 15 October 2026 • Meerensee & Arboretum
+   Scheduled water supply interruption from 08:00 to 14:00.
+----------------------------------------------------------------
+ SEARCH EVENTS   Category: [All Categories v]  [ ] Filter by date
+                                             [ Search ] [ Clear ]
+----------------------------------------------------------------
+ EVENTS                              | ✨ RECOMMENDED FOR YOU
+ ┌────────────────────────────────┐ | (Search to get suggestions)
+ │ Water Maintenance Notice   [Announcement]
+ │ Tue, 15 Oct 2026 • Meerensee   │ |
+ ├────────────────────────────────┤ |
+ │ Electricity Load Reduction [Announcement]
+ │ Tue, 15 Oct 2026 • eSikhaleni  │ |
+ ├────────────────────────────────┤ |
+ │ Empangeni Farmers Market       [Market]
+ │ Wed, 16 Oct 2026 • Empangeni   │ |
+ └────────────────────────────────┘ |
+----------------------------------------------------------------
+ Total Events: 8 | Unique Categories (Set): 6 | Unique Dates (Set): 7
+================================================================
+```
+
+### After searching "Community" — recommendations populate
+
+```
+ ✨ RECOMMENDED FOR YOU
+ Because you've been searching "Community" events
+ ┌────────────────────────────────┐
+ │ Heritage Day Celebration        │  Sat, 25 Oct 2026 • Community
+ ├────────────────────────────────┤
+ │ Richards Bay Community Cleanup  │  Fri, 17 Oct 2026 • Community
+ └────────────────────────────────┘
+```
+
+### Report submission success (Part 1)
+
+```
+┌──────────────────────────────────────────┐
+│   ✓ Report Submitted Successfully         │
+│                                            │
+│   Reference Number:  UMH-2026-0001         │
+│   Category: Water Supply   Priority: High  │
+│   Location: Meerensee, Richards Bay        │
+│                                            │
+│   Please save your reference number.       │
+└──────────────────────────────────────────┘
+```
+
+---
+
+## Project Structure
+
+```
+AdvancedProgrammingAss1/
+├── Program.cs                      # Application entry point
+├── Form1.cs / .Designer.cs         # Main Menu
+├── ReportIssuesForm.cs / .Designer # Report Issues (Part 1)
+├── ReportHistoryForm.cs / .Designer# Report history + export
+├── CustomDialog.cs                 # Branded confirm/success dialogs
+├── LocalEventsForm.cs / .Designer  # Local Events & Announcements (Part 2)
+├── LocalEvent.cs                   # LocalEvent model + EventManager
+├── RecommendationEngine.cs         # Search-pattern analysis + recommendations
+├── Resources/umhlathuze_logo.png   # Branding
+├── README.md / WALKTHROUGH.md      # Documentation
+└── .github/workflows/build.yml     # CI pipeline
+```
 
 ---
 
 ## Continuous Integration
 
-A GitHub Actions workflow (`.github/workflows/build.yml`) builds the application automatically on every push to `master`, verifying that the code compiles in Release mode on a Windows runner.
+A GitHub Actions workflow (`.github/workflows/build.yml`) builds the application in **Release** mode on a Windows runner for every push and pull request to `master`, verifying that the code compiles cleanly.
+
+```yaml
+- name: Build
+  run: dotnet build --configuration Release --no-restore
+```
 
 ---
 

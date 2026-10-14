@@ -274,6 +274,10 @@ namespace AdvancedProgrammingAss1
         private Button btnClearSearch;
         private Label lblResultCount;
         private Panel pnlEventList;
+        private Panel pnlRecommend;
+        private Label lblRecommendTitle;
+        private Label lblRecommendReason;
+        private Panel pnlRecommendList;
         private Panel pnlFooter;
         private Label lblStats;
         private Button btnBackToMenu;

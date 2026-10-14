@@ -12,6 +12,7 @@ namespace AdvancedProgrammingAss1
             PopulateCategoryFilter();
             LoadFeaturedEvent();
             DisplayEvents(EventManager.GetAllSortedByDate());
+            RefreshRecommendations(null);
             UpdateStats();
         }
 
@@ -132,6 +133,83 @@ namespace AdvancedProgrammingAss1
         }
 
         /// <summary>
+        /// Refreshes the "Recommended for You" sidebar using the RecommendationEngine.
+        /// Events currently shown in the main list (<paramref name="currentlyShown"/>)
+        /// are excluded so the suggestions feel fresh and complementary.
+        /// </summary>
+        private void RefreshRecommendations(List<LocalEvent>? currentlyShown)
+        {
+            // Update the explanatory reason line.
+            lblRecommendReason.Text = RecommendationEngine.HasSearchHistory
+                ? RecommendationEngine.GetRecommendationReason()
+                : "Search for events and we'll suggest related ones here.";
+
+            List<LocalEvent> recommendations =
+                RecommendationEngine.GetRecommendations(5, currentlyShown);
+
+            pnlRecommendList.Controls.Clear();
+
+            if (recommendations.Count == 0)
+            {
+                Label lblEmpty = new Label();
+                lblEmpty.Text = RecommendationEngine.HasSearchHistory
+                    ? "No related events to suggest right now."
+                    : "Try a search to get personalised suggestions.";
+                lblEmpty.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+                lblEmpty.ForeColor = Color.FromArgb(150, 160, 170);
+                lblEmpty.Location = new Point(6, 10);
+                lblEmpty.Size = new Size(pnlRecommendList.Width - 16, 40);
+                pnlRecommendList.Controls.Add(lblEmpty);
+                return;
+            }
+
+            int y = 6;
+            foreach (var ev in recommendations)
+            {
+                Panel card = CreateRecommendationCard(ev, y);
+                pnlRecommendList.Controls.Add(card);
+                y += card.Height + 8;
+            }
+        }
+
+        /// <summary>
+        /// Builds a compact recommendation card for the sidebar.
+        /// </summary>
+        private Panel CreateRecommendationCard(LocalEvent ev, int y)
+        {
+            Panel card = new Panel();
+            card.BackColor = Color.FromArgb(48, 56, 68);
+            card.Size = new Size(pnlRecommendList.Width - 16, 62);
+            card.Location = new Point(6, y);
+
+            Panel colourBar = new Panel();
+            colourBar.BackColor = GetCategoryColour(ev.Category);
+            colourBar.Size = new Size(5, card.Height);
+            colourBar.Location = new Point(0, 0);
+            card.Controls.Add(colourBar);
+
+            Label lblTitle = new Label();
+            lblTitle.Text = ev.Title;
+            lblTitle.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.AutoEllipsis = true;
+            lblTitle.Location = new Point(12, 8);
+            lblTitle.Size = new Size(card.Width - 22, 20);
+            card.Controls.Add(lblTitle);
+
+            Label lblMeta = new Label();
+            lblMeta.Text = $"{ev.Date:ddd, dd MMM}  •  {ev.Category}";
+            lblMeta.Font = new Font("Segoe UI", 8F, FontStyle.Regular);
+            lblMeta.ForeColor = Color.FromArgb(180, 190, 200);
+            lblMeta.AutoEllipsis = true;
+            lblMeta.Location = new Point(12, 32);
+            lblMeta.Size = new Size(card.Width - 22, 18);
+            card.Controls.Add(lblMeta);
+
+            return card;
+        }
+
+        /// <summary>
         /// Assigns a colour to each event category.
         /// </summary>
         private Color GetCategoryColour(string category)
@@ -159,6 +237,10 @@ namespace AdvancedProgrammingAss1
             List<LocalEvent> results = EventManager.Search(category, date);
             DisplayEvents(results);
             lblResultCount.Text = $"{results.Count} event(s) found";
+
+            // Learn from this search and refresh personalised recommendations.
+            RecommendationEngine.RecordSearch(category, date);
+            RefreshRecommendations(results);
         }
 
         /// <summary>
