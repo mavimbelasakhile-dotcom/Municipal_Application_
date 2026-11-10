@@ -120,11 +120,15 @@ namespace AdvancedProgrammingAss1
             this.lblCategoryFilter.Text = "Category:";
             this.pnlSearch.Controls.Add(this.lblCategoryFilter);
 
-            this.cmbSearchCategory.DropDownStyle = ComboBoxStyle.DropDownList;
+            // Editable combo box: users can TYPE a category or pick from the list.
+            this.cmbSearchCategory.DropDownStyle = ComboBoxStyle.DropDown;
+            this.cmbSearchCategory.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            this.cmbSearchCategory.AutoCompleteSource = AutoCompleteSource.CustomSource;
             this.cmbSearchCategory.FlatStyle = FlatStyle.Flat;
             this.cmbSearchCategory.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
             this.cmbSearchCategory.Location = new Point(80, 33);
             this.cmbSearchCategory.Size = new Size(180, 28);
+            this.cmbSearchCategory.KeyDown += new KeyEventHandler(this.cmbSearchCategory_KeyDown);
             this.pnlSearch.Controls.Add(this.cmbSearchCategory);
 
             this.chkFilterByDate.AutoSize = true;

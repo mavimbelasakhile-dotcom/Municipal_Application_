@@ -18,15 +18,7 @@ namespace AdvancedProgrammingAss1
         }
     }
 
-    /// <summary>
-    /// Manages the collection of local events using a variety of data structures:
-    ///  - SortedDictionary   : events organised by date (auto-sorted) for optimised retrieval
-    ///  - Dictionary         : fast lookup of events grouped by category (hash table)
-    ///  - HashSet            : unique categories and unique dates
-    ///  - Queue              : announcements processed in first-in-first-out order
-    ///  - Stack              : most recently added events (last-in-first-out) for "recent activity"
-    ///  - PriorityQueue      : events ordered by priority for the "featured" highlight
-    /// </summary>
+    
     public static class EventManager
     {
         // SortedDictionary keyed by date -> list of events on that date (auto-sorted by date)
@@ -119,7 +111,7 @@ namespace AdvancedProgrammingAss1
             var list = uniqueCategories.ToList();
             list.Sort();
             return list;
-        }
+        }  
 
         /// <summary>
         /// Returns the sorted set of unique dates.
