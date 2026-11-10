@@ -827,6 +827,23 @@ namespace AdvancedProgrammingAss1
         public string ContactMethod { get; set; } = string.Empty;
         public string ContactDetail { get; set; } = string.Empty;
 
+        // ----- Service-request workflow fields -----
+
+        /// <summary>Username of the citizen who logged this request.</summary>
+        public string ReporterUsername { get; set; } = string.Empty;
+
+        /// <summary>Display name of the citizen who logged this request.</summary>
+        public string ReporterName { get; set; } = string.Empty;
+
+        /// <summary>Username of the staff member this request is assigned to (empty if unassigned).</summary>
+        public string AssignedToUsername { get; set; } = string.Empty;
+
+        /// <summary>Display name of the staff member this request is assigned to.</summary>
+        public string AssignedToName { get; set; } = string.Empty;
+
+        /// <summary>Chronological record of every status change for this request.</summary>
+        public List<StatusHistoryEntry> History { get; set; } = new List<StatusHistoryEntry>();
+
         /// <summary>
         /// Generates a unique reference number (e.g., UMH-2026-0001).
         /// </summary>
