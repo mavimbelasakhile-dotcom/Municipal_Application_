@@ -1,4 +1,5 @@
 using System.Media;
+using AdvancedProgrammingAss1.ServiceRequest;
 
 namespace AdvancedProgrammingAss1
 {
@@ -726,6 +727,23 @@ namespace AdvancedProgrammingAss1
                 ContactMethod = rbEmail.Checked ? "Email" : rbPhone.Checked ? "Phone" : "SMS",
                 ContactDetail = GetFullContactDetail()
             };
+
+            // Attach the logged-in citizen as the reporter (if a user is logged in)
+            var currentUser = UserDirectory.CurrentUser;
+            if (currentUser != null)
+            {
+                issue.ReporterUsername = currentUser.Username;
+                issue.ReporterName = currentUser.DisplayName;
+            }
+
+            // Seed the audit trail with the initial "Submitted" entry
+            issue.History.Add(new StatusHistoryEntry
+            {
+                Status = "Submitted",
+                ChangedByName = issue.ReporterName,
+                Timestamp = issue.ReportDate,
+                Note = "Request logged by citizen"
+            });
 
             ReportedIssue.AddReport(issue);
 
