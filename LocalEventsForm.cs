@@ -17,14 +17,37 @@ namespace AdvancedProgrammingAss1
         }
 
         /// <summary>
-        /// Fills the category filter dropdown from the unique-category set.
+        /// Fills the category filter dropdown from the unique-category set and
+        /// wires up autocomplete so users can TYPE a category instead of only
+        /// selecting one from the list.
         /// </summary>
         private void PopulateCategoryFilter()
         {
+            var categories = EventManager.GetUniqueCategories();
+
             cmbSearchCategory.Items.Add("All Categories");
-            foreach (string category in EventManager.GetUniqueCategories())
+            foreach (string category in categories)
                 cmbSearchCategory.Items.Add(category);
+
+            // Build the autocomplete suggestion list (same values the user can pick).
+            var autoComplete = new AutoCompleteStringCollection();
+            autoComplete.Add("All Categories");
+            autoComplete.AddRange(categories.ToArray());
+            cmbSearchCategory.AutoCompleteCustomSource = autoComplete;
+
             cmbSearchCategory.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Lets the user press Enter in the category box to run the search.
+        /// </summary>
+        private void cmbSearchCategory_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // avoid the Windows "ding"
+                btnSearch_Click(sender, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -231,7 +254,10 @@ namespace AdvancedProgrammingAss1
         /// </summary>
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string category = cmbSearchCategory.SelectedItem?.ToString() ?? "All Categories";
+            // Read the TYPED text (works for both typed input and dropdown selection).
+            string category = cmbSearchCategory.Text.Trim();
+            if (string.IsNullOrWhiteSpace(category))
+                category = "All Categories";
             DateTime? date = chkFilterByDate.Checked ? dtpSearchDate.Value.Date : (DateTime?)null;
 
             List<LocalEvent> results = EventManager.Search(category, date);
