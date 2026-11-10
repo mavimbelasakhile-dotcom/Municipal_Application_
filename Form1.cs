@@ -70,9 +70,10 @@ namespace AdvancedProgrammingAss1
 
         private void btnServiceRequest_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This feature will be implemented in a future update.\n\n" +
-                "You will be able to track your service request status here.",
-                "Coming Soon", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            LoginForm loginForm = new LoginForm();
+            loginForm.ShowDialog();
+            // Refresh the badge in case requests changed during the session
+            UpdateReportBadge();
         }
 
         private void btnViewReports_Click(object sender, EventArgs e)

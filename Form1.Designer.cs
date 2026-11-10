@@ -168,12 +168,13 @@
             this.btnLocalEvents.Click += new EventHandler(this.btnLocalEvents_Click);
 
             // btnServiceRequest
-            this.btnServiceRequest.BackColor = Color.FromArgb(200, 200, 200);
-            this.btnServiceRequest.Enabled = false;
+            this.btnServiceRequest.BackColor = Color.FromArgb(0, 123, 255);
+            this.btnServiceRequest.Cursor = Cursors.Hand;
             this.btnServiceRequest.FlatAppearance.BorderSize = 0;
+            this.btnServiceRequest.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 105, 217);
             this.btnServiceRequest.FlatStyle = FlatStyle.Flat;
             this.btnServiceRequest.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
-            this.btnServiceRequest.ForeColor = Color.FromArgb(120, 120, 120);
+            this.btnServiceRequest.ForeColor = Color.White;
             this.btnServiceRequest.Location = new Point(50, 270);
             this.btnServiceRequest.Name = "btnServiceRequest";
             this.btnServiceRequest.Size = new Size(380, 70);
