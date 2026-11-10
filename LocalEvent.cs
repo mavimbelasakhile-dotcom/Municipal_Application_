@@ -131,11 +131,25 @@ namespace AdvancedProgrammingAss1
         {
             IEnumerable<LocalEvent> query;
 
-            // Use the category Dictionary (hash table) for a fast initial filter
-            if (!string.IsNullOrWhiteSpace(category) && category != "All Categories"
-                && eventsByCategory.ContainsKey(category))
+            bool hasCategory = !string.IsNullOrWhiteSpace(category)
+                && !string.Equals(category, "All Categories", StringComparison.OrdinalIgnoreCase);
+
+            if (hasCategory)
             {
-                query = eventsByCategory[category];
+                string term = category!.Trim();
+
+                // Fast path: exact category match uses the Dictionary (hash table).
+                if (eventsByCategory.ContainsKey(term))
+                {
+                    query = eventsByCategory[term];
+                }
+                else
+                {
+                    // Typed / partial text: match any category that contains the
+                    // typed term (case-insensitive) so free-text searches work.
+                    query = allEvents.Where(e =>
+                        e.Category.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0);
+                }
             }
             else
             {
