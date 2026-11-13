@@ -295,6 +295,161 @@ namespace AdvancedProgrammingAss1
 
                 y += barHeight + barGap;
             }
+
+            y += 20;
+
+            // ---- Pie chart: issues by category ----
+            y = DrawCategoryPie(g, width, y);
+
+            y += 30;
+
+            // ---- Bar graph: issues by priority ----
+            y = DrawPriorityBars(g, width, y);
+
+            // Let the panel scroll if the content is taller than the view.
+            chartPanel.AutoScrollMinSize = new Size(0, y + 20);
+        }
+
+        /// <summary>
+        /// Draws a pie chart of reported issues grouped by category, with a
+        /// legend on the right showing each category's colour, count and share.
+        /// Returns the Y position just below the chart.
+        /// </summary>
+        private int DrawCategoryPie(Graphics g, int width, int y)
+        {
+            using var titleFont = new Font("Segoe UI", 12F, FontStyle.Bold);
+            using var titleBrush = new SolidBrush(Color.FromArgb(40, 40, 40));
+            g.DrawString("Issues by Category", titleFont, titleBrush, 20, y);
+            y += 34;
+
+            int categoryTotal = categorySlices.Sum(s => s.Count);
+            if (categoryTotal == 0)
+            {
+                using var greyBrush = new SolidBrush(Color.FromArgb(120, 120, 120));
+                using var italic = new Font("Segoe UI", 10F, FontStyle.Italic);
+                g.DrawString("No categorised issues to display.", italic, greyBrush, 24, y);
+                return y + 24;
+            }
+
+            int pieSize = 220;
+            int pieX = 30;
+            int pieY = y;
+            var pieRect = new Rectangle(pieX, pieY, pieSize, pieSize);
+
+            float startAngle = -90f; // start at the top
+            foreach (var slice in categorySlices)
+            {
+                float sweep = (float)(slice.Count / (double)categoryTotal * 360.0);
+                using (var sliceBrush = new SolidBrush(slice.Color))
+                    g.FillPie(sliceBrush, pieRect, startAngle, sweep);
+                using (var outline = new Pen(Color.White, 2))
+                    g.DrawPie(outline, pieRect, startAngle, sweep);
+                startAngle += sweep;
+            }
+
+            // ---- Legend ----
+            int legendX = pieX + pieSize + 40;
+            int legendY = pieY;
+            int swatch = 16;
+            using var legendFont = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            using var legendBrush = new SolidBrush(Color.FromArgb(60, 60, 60));
+
+            foreach (var slice in categorySlices)
+            {
+                using (var sw = new SolidBrush(slice.Color))
+                    g.FillRectangle(sw, legendX, legendY, swatch, swatch);
+
+                double share = slice.Count / (double)categoryTotal * 100.0;
+                string text = $"{slice.Label}  —  {slice.Count} ({share:F0}%)";
+                g.DrawString(text, legendFont, legendBrush,
+                    legendX + swatch + 8, legendY + 1);
+
+                legendY += swatch + 10;
+            }
+
+            int bottom = Math.Max(pieY + pieSize, legendY);
+            return bottom;
+        }
+
+        /// <summary>
+        /// Draws a horizontal bar graph of reported issues grouped by priority.
+        /// Returns the Y position just below the chart.
+        /// </summary>
+        private int DrawPriorityBars(Graphics g, int width, int y)
+        {
+            using var titleFont = new Font("Segoe UI", 12F, FontStyle.Bold);
+            using var titleBrush = new SolidBrush(Color.FromArgb(40, 40, 40));
+            g.DrawString("Issues by Priority", titleFont, titleBrush, 20, y);
+            y += 34;
+
+            int priorityTotal = priorityBars.Sum(b => b.Count);
+            if (priorityTotal == 0)
+            {
+                using var greyBrush = new SolidBrush(Color.FromArgb(120, 120, 120));
+                using var italic = new Font("Segoe UI", 10F, FontStyle.Italic);
+                g.DrawString("No prioritised issues to display.", italic, greyBrush, 24, y);
+                return y + 24;
+            }
+
+            int chartLeft = 150;
+            int chartRight = width - 30;
+            int barAreaWidth = chartRight - chartLeft;
+            int barHeight = 30;
+            int barGap = 18;
+            int maxCount = Math.Max(1, priorityBars.Max(b => b.Count));
+
+            using var labelFont = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            using var countFont = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            using var labelBrush = new SolidBrush(Color.FromArgb(60, 60, 60));
+
+            foreach (var bar in priorityBars)
+            {
+                var lSize = g.MeasureString(bar.Label, labelFont);
+                g.DrawString(bar.Label, labelFont, labelBrush,
+                    chartLeft - lSize.Width - 10, y + (barHeight - lSize.Height) / 2);
+
+                var track = new Rectangle(chartLeft, y, barAreaWidth, barHeight);
+                using (var trackBrush = new SolidBrush(Color.FromArgb(238, 240, 243)))
+                    g.FillRectangle(trackBrush, track);
+
+                int barWidth = (int)(barAreaWidth * (bar.Count / (double)maxCount));
+                if (bar.Count > 0 && barWidth < 4) barWidth = 4;
+                var barRect = new Rectangle(chartLeft, y, barWidth, barHeight);
+                using (var barBrush = new SolidBrush(bar.Color))
+                    g.FillRectangle(barBrush, barRect);
+
+                string countText = bar.Count.ToString();
+                var cSize = g.MeasureString(countText, countFont);
+                if (barWidth > cSize.Width + 12)
+                {
+                    using var white = new SolidBrush(Color.White);
+                    g.DrawString(countText, countFont, white,
+                        chartLeft + barWidth - cSize.Width - 8, y + (barHeight - cSize.Height) / 2);
+                }
+                else
+                {
+                    using var dark = new SolidBrush(Color.FromArgb(60, 60, 60));
+                    g.DrawString(countText, countFont, dark,
+                        chartLeft + barWidth + 6, y + (barHeight - cSize.Height) / 2);
+                }
+
+                y += barHeight + barGap;
+            }
+
+            return y;
+        }
+
+        /// <summary>A UI colour for each priority level.</summary>
+        private static Color ColorForPriority(string priority)
+        {
+            switch (priority)
+            {
+                case "Low":      return Color.FromArgb(40, 167, 69);   // green
+                case "Medium":   return Color.FromArgb(255, 193, 7);   // amber
+                case "High":     return Color.FromArgb(255, 140, 0);   // orange
+                case "Critical": return Color.FromArgb(220, 53, 69);   // red
+                default:         return Color.FromArgb(108, 117, 125); // grey
+            }
         }
 
         private void SafeReload()
