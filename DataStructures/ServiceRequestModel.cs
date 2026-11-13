@@ -1,7 +1,9 @@
-namespace AdvancedProgrammingAss1
+namespace AdvancedProgrammingAss1.DataStructures
 {
     /// <summary>
     /// Represents a single municipal service request that a resident can track.
+    /// This is the model used by the advanced data-structures subsystem
+    /// (BST / AVL / Red-Black / MinHeap / Graph).
     /// </summary>
     public class ServiceRequest
     {

@@ -1,18 +1,20 @@
-using AdvancedProgrammingAss1.DataStructures;
-
-namespace AdvancedProgrammingAss1
+namespace AdvancedProgrammingAss1.DataStructures
 {
     /// <summary>
-    /// Central store for service requests. It loads every request into several
-    /// advanced data structures at once, each chosen for the job it does best:
+    /// Central repository for the data-structures subsystem. It loads every
+    /// request into several advanced data structures at once, each chosen for
+    /// the job it does best:
     ///
     ///   • BinarySearchTree  - simple ordered index by id (teaching baseline)
     ///   • RedBlackTree      - balanced ordered index by id for fast tracking
     ///   • AVLTree           - balanced ordered-by-date list for the status view
     ///   • MinHeap           - priority queue so the most urgent request surfaces
     ///   • ServiceRequestGraph - models related requests + BFS/DFS + MST
+    ///
+    /// Named <c>ServiceRequestRepository</c> to distinguish it from the active
+    /// workflow coordinator <see cref="ServiceRequest.ServiceRequestManager"/>.
     /// </summary>
-    public static class ServiceRequestManager
+    public static class ServiceRequestRepository
     {
         private static readonly List<ServiceRequest> all = new List<ServiceRequest>();
 
