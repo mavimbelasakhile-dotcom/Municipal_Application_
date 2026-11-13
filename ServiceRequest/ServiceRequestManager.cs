@@ -111,6 +111,8 @@ namespace AdvancedProgrammingAss1.ServiceRequest
                     return $"Your request {reference} has been marked Resolved. Please confirm you're satisfied.";
                 case StatusClosed:
                     return $"Your request {reference} has been Closed. Thank you for reporting it.";
+                case StatusRejected:
+                    return $"Your request {reference} has been Rejected. Please contact the municipality for details.";
                 default:
                     return $"Your request {reference} status changed to: {status}.";
             }
