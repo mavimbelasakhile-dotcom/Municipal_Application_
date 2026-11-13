@@ -17,6 +17,11 @@ namespace AdvancedProgrammingAss1
         private ComboBox cmbStaff = null!;
         private Label lblEmpty = null!;
         private Label lblSummary = null!;
+        private Panel graphPanel = null!;
+
+        // Status breakdown used to paint the bar graph below the request list.
+        private readonly List<(string status, int count, Color color)> statusBars
+            = new List<(string, int, Color)>();
 
         public AdminDashboardForm(UserAccount administrator)
         {
@@ -97,8 +102,8 @@ namespace AdvancedProgrammingAss1
             grid = new DataGridView
             {
                 Location = new Point(20, 145),
-                Size = new Size(940, 420),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
+                Size = new Size(940, 250),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 ReadOnly = true,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -125,6 +130,29 @@ namespace AdvancedProgrammingAss1
                 if (e.RowIndex < all.Count) RequestDetails.Show(all[e.RowIndex]);
             };
             Controls.Add(grid);
+
+            // ---- Status breakdown graph, directly below the request list ----
+            Label lblGraphTitle = new Label
+            {
+                Text = "\uD83D\uDCC8  Service Requests by Status",
+                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                ForeColor = Brand,
+                Location = new Point(20, 405),
+                AutoSize = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
+            };
+            Controls.Add(lblGraphTitle);
+
+            graphPanel = new Panel
+            {
+                Location = new Point(20, 432),
+                Size = new Size(940, 133),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
+                BackColor = Color.FromArgb(248, 249, 250),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            graphPanel.Paint += GraphPanel_Paint;
+            Controls.Add(graphPanel);
 
             lblEmpty = new Label
             {

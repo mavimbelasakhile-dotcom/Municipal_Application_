@@ -894,13 +894,19 @@ namespace AdvancedProgrammingAss1
             if (seeded) return;
             seeded = true;
 
+            // A spread of statuses across the sample data so the Administrator's
+            // status breakdown / analytics view has meaningful variety to show:
+            // In Progress, Resolved, Rejected, On Hold, Assigned and Submitted.
+
             AddSeededRequest(
                 "citizen.sipho", "Sipho Khumalo",
                 "Water Supply", "Critical",
                 "Veld En Vlei, Richards Bay",
                 "No water supply to the whole street for the past two days. Several households affected.",
                 DateTime.Now.AddDays(-3),
-                "Phone", "082 123 4567");
+                "Phone", "082 123 4567",
+                ServiceRequest.ServiceRequestManager.StatusInProgress,
+                "staff.thabo");
 
             AddSeededRequest(
                 "citizen.sipho", "Sipho Khumalo",
@@ -908,7 +914,9 @@ namespace AdvancedProgrammingAss1
                 "Meerensee, Richards Bay",
                 "Street light at the corner has been out for over a week, making the area unsafe at night.",
                 DateTime.Now.AddDays(-2),
-                "Email", "sipho.k@example.com");
+                "Email", "sipho.k@example.com",
+                ServiceRequest.ServiceRequestManager.StatusResolved,
+                "staff.johan");
 
             AddSeededRequest(
                 "citizen.lerato", "Lerato Mokoena",
@@ -916,7 +924,9 @@ namespace AdvancedProgrammingAss1
                 "John Ross Parkway, Richards Bay",
                 "Large pothole in the fast lane causing drivers to swerve. Already damaged a tyre.",
                 DateTime.Now.AddDays(-1),
-                "Phone", "083 987 6543");
+                "Phone", "083 987 6543",
+                ServiceRequest.ServiceRequestManager.StatusInProgress,
+                "staff.nadia");
 
             AddSeededRequest(
                 "citizen.lerato", "Lerato Mokoena",
@@ -924,7 +934,9 @@ namespace AdvancedProgrammingAss1
                 "CBD, Empangeni",
                 "Blocked storm drain overflowing onto the pavement after rain. Bad smell in the area.",
                 DateTime.Now.AddHours(-20),
-                "Email", "lerato.m@example.com");
+                "Email", "lerato.m@example.com",
+                ServiceRequest.ServiceRequestManager.StatusOnHold,
+                "staff.thabo");
 
             AddSeededRequest(
                 "citizen.anita", "Anita van Wyk",
@@ -932,7 +944,9 @@ namespace AdvancedProgrammingAss1
                 "Brackenham, Richards Bay",
                 "Household waste and garden refuse dumped on the verge. Needs to be cleared.",
                 DateTime.Now.AddHours(-10),
-                "SMS", "084 555 1212");
+                "SMS", "084 555 1212",
+                ServiceRequest.ServiceRequestManager.StatusRejected,
+                "");
 
             AddSeededRequest(
                 "citizen.anita", "Anita van Wyk",
@@ -940,18 +954,24 @@ namespace AdvancedProgrammingAss1
                 "Arboretum, Richards Bay",
                 "Power outage affecting the whole block since this morning. No estimated restore time given.",
                 DateTime.Now.AddHours(-4),
-                "Phone", "084 555 1212");
+                "Phone", "084 555 1212",
+                ServiceRequest.ServiceRequestManager.StatusResolved,
+                "staff.johan");
         }
 
         /// <summary>
-        /// Helper that builds a single seeded request (status "Submitted", unassigned)
-        /// with its reporter and an initial audit-trail entry, then stores it.
+        /// Helper that builds a single seeded request with its reporter, an initial
+        /// "Submitted" audit entry, and — where a non-default status/assignee is
+        /// supplied — a follow-up audit trail reflecting how the request progressed.
+        /// This lets the sample data demonstrate the full range of statuses.
         /// </summary>
         private static void AddSeededRequest(
             string reporterUsername, string reporterName,
             string category, string priority, string location,
             string description, DateTime when,
-            string contactMethod, string contactDetail)
+            string contactMethod, string contactDetail,
+            string status = "Submitted",
+            string assignedToUsername = "")
         {
             var issue = new ReportedIssue
             {
@@ -961,13 +981,24 @@ namespace AdvancedProgrammingAss1
                 Priority = priority,
                 Description = description,
                 ReportDate = when,
-                Status = "Submitted",
+                Status = status,
                 ContactMethod = contactMethod,
                 ContactDetail = contactDetail,
                 ReporterUsername = reporterUsername,
                 ReporterName = reporterName
             };
 
+            // Resolve the assignee (if any) so the grid shows a real staff name.
+            var assignee = string.IsNullOrWhiteSpace(assignedToUsername)
+                ? null
+                : ServiceRequest.UserDirectory.GetByUsername(assignedToUsername);
+            if (assignee != null)
+            {
+                issue.AssignedToUsername = assignee.Username;
+                issue.AssignedToName = assignee.DisplayName;
+            }
+
+            // Every request starts with the citizen's "Submitted" entry.
             issue.History.Add(new ServiceRequest.StatusHistoryEntry
             {
                 Status = "Submitted",
@@ -976,7 +1007,72 @@ namespace AdvancedProgrammingAss1
                 Note = "Request logged by citizen"
             });
 
+            BuildSeededHistory(issue, status, assignee, when);
+
             allReports.Add(issue);
+        }
+
+        /// <summary>
+        /// Adds the intermediate audit-trail entries that lead up to a seeded
+        /// request's final status, so the history looks realistic in the details view.
+        /// </summary>
+        private static void BuildSeededHistory(
+            ReportedIssue issue, string finalStatus,
+            ServiceRequest.UserAccount? assignee, DateTime submittedAt)
+        {
+            if (finalStatus == "Submitted") return;
+
+            string admin = ServiceRequest.UserDirectory.Administrator.DisplayName;
+            string staffName = assignee?.DisplayName ?? "Staff";
+            DateTime t = submittedAt;
+
+            void Step(string status, string by, string note, double hoursLater)
+            {
+                t = t.AddHours(hoursLater);
+                issue.History.Add(new ServiceRequest.StatusHistoryEntry
+                {
+                    Status = status,
+                    ChangedByName = by,
+                    Timestamp = t,
+                    Note = note
+                });
+            }
+
+            string Assigned = ServiceRequest.ServiceRequestManager.StatusAssigned;
+            string InProgress = ServiceRequest.ServiceRequestManager.StatusInProgress;
+            string OnHold = ServiceRequest.ServiceRequestManager.StatusOnHold;
+            string Resolved = ServiceRequest.ServiceRequestManager.StatusResolved;
+            string Rejected = ServiceRequest.ServiceRequestManager.StatusRejected;
+
+            // Rejected requests are turned down by the administrator up front.
+            if (finalStatus == Rejected)
+            {
+                Step(Rejected, admin, "Request rejected — outside municipal scope / duplicate.", 2);
+                return;
+            }
+
+            // Anything past "Submitted" is first assigned by the administrator.
+            if (assignee != null)
+                Step(Assigned, admin, $"Assigned to {staffName} ({assignee.Department}).", 1);
+
+            if (finalStatus == Assigned) return;
+
+            // In Progress, On Hold and Resolved all pass through "In Progress".
+            Step(InProgress, staffName, "Work has started on site.", 3);
+
+            if (finalStatus == InProgress) return;
+
+            if (finalStatus == OnHold)
+            {
+                Step(OnHold, staffName, "Paused — awaiting parts / dependent work.", 4);
+                return;
+            }
+
+            if (finalStatus == Resolved)
+            {
+                Step(Resolved, staffName, "Issue fixed and verified on site.", 6);
+                return;
+            }
         }
 
         /// <summary>
