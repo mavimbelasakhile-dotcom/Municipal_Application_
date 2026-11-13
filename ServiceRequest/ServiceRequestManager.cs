@@ -156,6 +156,7 @@ namespace AdvancedProgrammingAss1.ServiceRequest
                 case StatusOnHold:     return Color.FromArgb(180, 140, 0);    // amber
                 case StatusResolved:   return Color.FromArgb(40, 167, 69);    // green
                 case StatusClosed:     return Color.FromArgb(60, 60, 60);     // dark
+                case StatusRejected:   return Color.FromArgb(220, 53, 69);    // red
                 default:               return Color.FromArgb(108, 117, 125);
             }
         }
