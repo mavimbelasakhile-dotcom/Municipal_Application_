@@ -137,6 +137,22 @@ namespace AdvancedProgrammingAss1
             };
             Controls.Add(lblEmpty);
 
+            Button btnStats = new Button
+            {
+                Text = "\uD83D\uDCCA  View Statistics",
+                BackColor = Blue,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                Size = new Size(190, 40),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+                Location = new Point(20, ClientSize.Height - 55),
+                Cursor = Cursors.Hand
+            };
+            btnStats.FlatAppearance.BorderSize = 0;
+            btnStats.Click += (s, e) => new AdminStatisticsForm().ShowDialog();
+            Controls.Add(btnStats);
+
             Button btnClose = new Button
             {
                 Text = "Logout",
