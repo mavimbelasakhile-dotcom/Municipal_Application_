@@ -21,7 +21,21 @@ namespace AdvancedProgrammingAss1
 
         // Captured snapshot of the numbers we draw.
         private readonly List<(string Label, int Count, Color Color)> statusBars = new();
+        private readonly List<(string Label, int Count, Color Color)> categorySlices = new();
+        private readonly List<(string Label, int Count, Color Color)> priorityBars = new();
         private int total, open, closed, assigned, unassigned;
+
+        // A palette used to colour the category pie slices.
+        private static readonly Color[] CategoryPalette =
+        {
+            Color.FromArgb(0, 123, 255),   Color.FromArgb(40, 167, 69),
+            Color.FromArgb(255, 140, 0),   Color.FromArgb(220, 53, 69),
+            Color.FromArgb(111, 66, 193),  Color.FromArgb(23, 162, 184),
+            Color.FromArgb(255, 193, 7),   Color.FromArgb(232, 62, 140),
+            Color.FromArgb(102, 16, 242),  Color.FromArgb(32, 201, 151),
+            Color.FromArgb(253, 126, 20),  Color.FromArgb(108, 117, 125),
+            Color.FromArgb(52, 58, 64)
+        };
 
         public AdminStatisticsForm()
         {
