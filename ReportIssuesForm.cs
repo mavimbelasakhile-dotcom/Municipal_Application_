@@ -881,6 +881,104 @@ namespace AdvancedProgrammingAss1
             return allReports;
         }
 
+        // Ensures the sample requests are only seeded once per session.
+        private static bool seeded = false;
+
+        /// <summary>
+        /// Pre-loads a handful of sample service requests, each attributed to one
+        /// of the seeded citizens. This gives the Administrator something to assign
+        /// and lets each citizen see their own logged requests. Runs only once.
+        /// </summary>
+        public static void SeedSampleRequests()
+        {
+            if (seeded) return;
+            seeded = true;
+
+            AddSeededRequest(
+                "citizen.sipho", "Sipho Khumalo",
+                "Water Supply", "Critical",
+                "Veld En Vlei, Richards Bay",
+                "No water supply to the whole street for the past two days. Several households affected.",
+                DateTime.Now.AddDays(-3),
+                "Phone", "082 123 4567");
+
+            AddSeededRequest(
+                "citizen.sipho", "Sipho Khumalo",
+                "Street Lights", "Medium",
+                "Meerensee, Richards Bay",
+                "Street light at the corner has been out for over a week, making the area unsafe at night.",
+                DateTime.Now.AddDays(-2),
+                "Email", "sipho.k@example.com");
+
+            AddSeededRequest(
+                "citizen.lerato", "Lerato Mokoena",
+                "Roads & Potholes", "High",
+                "John Ross Parkway, Richards Bay",
+                "Large pothole in the fast lane causing drivers to swerve. Already damaged a tyre.",
+                DateTime.Now.AddDays(-1),
+                "Phone", "083 987 6543");
+
+            AddSeededRequest(
+                "citizen.lerato", "Lerato Mokoena",
+                "Sewerage & Drainage", "High",
+                "CBD, Empangeni",
+                "Blocked storm drain overflowing onto the pavement after rain. Bad smell in the area.",
+                DateTime.Now.AddHours(-20),
+                "Email", "lerato.m@example.com");
+
+            AddSeededRequest(
+                "citizen.anita", "Anita van Wyk",
+                "Illegal Dumping", "Low",
+                "Brackenham, Richards Bay",
+                "Household waste and garden refuse dumped on the verge. Needs to be cleared.",
+                DateTime.Now.AddHours(-10),
+                "SMS", "084 555 1212");
+
+            AddSeededRequest(
+                "citizen.anita", "Anita van Wyk",
+                "Electricity & Power", "Critical",
+                "Arboretum, Richards Bay",
+                "Power outage affecting the whole block since this morning. No estimated restore time given.",
+                DateTime.Now.AddHours(-4),
+                "Phone", "084 555 1212");
+        }
+
+        /// <summary>
+        /// Helper that builds a single seeded request (status "Submitted", unassigned)
+        /// with its reporter and an initial audit-trail entry, then stores it.
+        /// </summary>
+        private static void AddSeededRequest(
+            string reporterUsername, string reporterName,
+            string category, string priority, string location,
+            string description, DateTime when,
+            string contactMethod, string contactDetail)
+        {
+            var issue = new ReportedIssue
+            {
+                ReferenceNumber = GenerateReferenceNumber(),
+                Location = location,
+                Category = category,
+                Priority = priority,
+                Description = description,
+                ReportDate = when,
+                Status = "Submitted",
+                ContactMethod = contactMethod,
+                ContactDetail = contactDetail,
+                ReporterUsername = reporterUsername,
+                ReporterName = reporterName
+            };
+
+            issue.History.Add(new ServiceRequest.StatusHistoryEntry
+            {
+                Status = "Submitted",
+                ChangedByName = reporterName,
+                Timestamp = when,
+                Note = "Request logged by citizen"
+            });
+
+            allReports.Add(issue);
+        }
+
         /// <summary>
         /// Exports all reports to a text file.
         /// </summary>

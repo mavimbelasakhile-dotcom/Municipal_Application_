@@ -15,6 +15,9 @@ namespace AdvancedProgrammingAss1
 
         public LoginForm()
         {
+            // Pre-load sample service requests (one set per citizen) so that the
+            // Administrator has requests to assign and each citizen can see their own.
+            ReportedIssue.SeedSampleRequests();
             BuildUi();
         }
 
