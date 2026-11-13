@@ -82,9 +82,11 @@ namespace AdvancedProgrammingAss1
                 Size = new Size(ClientSize.Width - 40, ClientSize.Height - 170),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                AutoScroll = true
             };
             chartPanel.Paint += ChartPanel_Paint;
+            chartPanel.Resize += (s, e) => chartPanel.Invalidate();
             Controls.Add(chartPanel);
 
             Button btnRefresh = new Button
@@ -144,6 +146,31 @@ namespace AdvancedProgrammingAss1
                 int count = all.Count(r =>
                     string.Equals(r.Status, status, StringComparison.OrdinalIgnoreCase));
                 statusBars.Add((status, count, ServiceRequestManager.ColorFor(status)));
+            }
+
+            // ---- Category breakdown (for the pie chart) ----
+            categorySlices.Clear();
+            var categoryGroups = all
+                .Where(r => !string.IsNullOrWhiteSpace(r.Category))
+                .GroupBy(r => r.Category)
+                .OrderByDescending(gr => gr.Count())
+                .ToList();
+
+            int paletteIndex = 0;
+            foreach (var gr in categoryGroups)
+            {
+                Color sliceColor = CategoryPalette[paletteIndex % CategoryPalette.Length];
+                categorySlices.Add((gr.Key, gr.Count(), sliceColor));
+                paletteIndex++;
+            }
+
+            // ---- Priority breakdown (for the bar graph) ----
+            priorityBars.Clear();
+            foreach (var priority in new[] { "Low", "Medium", "High", "Critical" })
+            {
+                int count = all.Count(r =>
+                    string.Equals(r.Priority, priority, StringComparison.OrdinalIgnoreCase));
+                priorityBars.Add((priority, count, ColorForPriority(priority)));
             }
 
             lblHeadline.Text =
