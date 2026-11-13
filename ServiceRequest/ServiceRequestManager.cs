@@ -26,11 +26,12 @@ namespace AdvancedProgrammingAss1.ServiceRequest
         public const string StatusOnHold = "On Hold";
         public const string StatusResolved = "Resolved";
         public const string StatusClosed = "Closed";
+        public const string StatusRejected = "Rejected";
 
         /// <summary>All statuses in lifecycle order (used for display / colours).</summary>
         public static readonly string[] AllStatuses =
         {
-            StatusSubmitted, StatusAssigned, StatusInProgress, StatusOnHold, StatusResolved, StatusClosed
+            StatusSubmitted, StatusAssigned, StatusInProgress, StatusOnHold, StatusResolved, StatusClosed, StatusRejected
         };
 
         /// <summary>
