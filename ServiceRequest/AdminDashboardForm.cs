@@ -267,6 +267,81 @@ namespace AdvancedProgrammingAss1
             }
 
             lblSummary.Text = $"{all.Count} total request(s)  •  {unassigned} awaiting assignment";
+
+            // Rebuild the status breakdown and repaint the graph.
+            statusBars.Clear();
+            foreach (var status in ServiceRequestManager.AllStatuses)
+            {
+                int count = all.Count(r =>
+                    string.Equals(r.Status, status, StringComparison.OrdinalIgnoreCase));
+                statusBars.Add((status, count, ServiceRequestManager.ColorFor(status)));
+            }
+            graphPanel?.Invalidate();
+        }
+
+        /// <summary>
+        /// Draws a horizontal bar graph of the request counts for each status,
+        /// giving the administrator an at-a-glance view below the request list.
+        /// </summary>
+        private void GraphPanel_Paint(object? sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+            int padding = 14;
+            int labelWidth = 110;
+            int valueWidth = 42;
+            int rowCount = statusBars.Count;
+            if (rowCount == 0) return;
+
+            int available = graphPanel.Height - padding * 2;
+            int rowHeight = Math.Max(10, available / rowCount);
+            int barAreaWidth = graphPanel.Width - padding * 2 - labelWidth - valueWidth;
+            if (barAreaWidth < 10) barAreaWidth = 10;
+
+            int maxCount = Math.Max(1, statusBars.Max(b => b.count));
+
+            using var labelFont = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            using var valueFont = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            using var textBrush = new SolidBrush(Color.FromArgb(60, 60, 60));
+
+            int y = padding;
+            foreach (var (status, count, color) in statusBars)
+            {
+                int barHeight = Math.Max(8, rowHeight - 8);
+                int barY = y + (rowHeight - barHeight) / 2;
+
+                // Status label (left)
+                var labelRect = new RectangleF(padding, barY, labelWidth - 6, barHeight);
+                var sf = new StringFormat
+                {
+                    Alignment = StringAlignment.Near,
+                    LineAlignment = StringAlignment.Center
+                };
+                g.DrawString(status, labelFont, textBrush, labelRect, sf);
+
+                // Track (background) + value bar
+                int trackX = padding + labelWidth;
+                using var trackBrush = new SolidBrush(Color.FromArgb(230, 232, 235));
+                g.FillRectangle(trackBrush, trackX, barY, barAreaWidth, barHeight);
+
+                int barWidth = (int)((double)count / maxCount * barAreaWidth);
+                if (count > 0 && barWidth < 4) barWidth = 4;
+                using var barBrush = new SolidBrush(color);
+                g.FillRectangle(barBrush, trackX, barY, barWidth, barHeight);
+
+                // Count value (right)
+                var valueRect = new RectangleF(trackX + barAreaWidth + 4, barY, valueWidth - 4, barHeight);
+                var vf = new StringFormat
+                {
+                    Alignment = StringAlignment.Near,
+                    LineAlignment = StringAlignment.Center
+                };
+                g.DrawString(count.ToString(), valueFont, textBrush, valueRect, vf);
+
+                y += rowHeight;
+            }
         }
 
         private void SafeReload()
